@@ -1,0 +1,37 @@
+/* Countdown Timer Plugin Styles */
+
+.countdown-timer {
+	padding: 1em;
+	width: fit-content;
+	margin: 0 auto;
+	border: 2px solid var(--background-modifier-border);
+	border-radius: 6px;
+	background-color: var(--background-secondary);
+}
+
+.countdown-timer-title {
+	font-weight: bold;
+	margin-bottom: 0.5em;
+}
+
+.countdown-timer-display {
+	font-family: var(--font-monospace);
+	font-size: 1.2em;
+}
+
+.countdown-timer-expired {
+	opacity: 0.7;
+}
+
+.countdown-timer-status {
+	font-size: 0.9em;
+	margin-top: 0.5em;
+	font-style: italic;
+}
+
+.countdown-timer-error {
+	color: var(--text-error);
+	padding: 1em;
+	border: 1px solid var(--text-error);
+	border-radius: 4px;
+}
