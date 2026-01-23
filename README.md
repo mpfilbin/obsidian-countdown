@@ -4,12 +4,18 @@ A plugin for [Obsidian](https://obsidian.md) that adds countdown timer functiona
 
 ## Installation
 
-### From Obsidian Community Plugins
+### Using BRAT (Recommended)
 
-1. Open Obsidian Settings
-2. Go to Community Plugins and disable Safe Mode
-3. Click Browse and search for "Countdown Timer"
-4. Install the plugin and enable it
+[BRAT](https://github.com/TfTHacker/obsidian42-brat) (Beta Reviewers Auto-update Tool) allows you to install and update beta plugins directly from GitHub.
+
+1. Install the BRAT plugin from Obsidian Community Plugins
+2. Open BRAT settings (Settings > BRAT)
+3. Click "Add Beta Plugin"
+4. Enter this repository URL: `mfilbin/obsidian-countdown`
+5. Click "Add Plugin"
+6. Enable the plugin in Settings > Community Plugins
+
+BRAT will automatically check for updates and notify you when new versions are available.
 
 ### Manual Installation
 

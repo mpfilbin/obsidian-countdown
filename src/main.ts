@@ -1,20 +1,20 @@
 import { Plugin } from 'obsidian';
 import { parseConfig } from './parsers/config-parser';
 import { renderTimer, renderError, ActiveTimer } from './components/timer-renderer';
+import { CountdownSettingTab } from './components/settings-tab';
 
 export default class CountdownPlugin extends Plugin {
-  /** Track active timers for cleanup */
   private activeTimers: ActiveTimer[] = [];
 
   async onload() {
-    // Register the countdown code block processor
+    this.addSettingTab(new CountdownSettingTab(this.app, this));
+
     this.registerMarkdownCodeBlockProcessor('countdown', (source, el) => {
       this.processCountdownBlock(source, el);
     });
   }
 
   onunload() {
-    // Clean up all active timers
     for (const timer of this.activeTimers) {
       timer.stop();
     }
@@ -28,7 +28,6 @@ export default class CountdownPlugin extends Plugin {
    * @param el - The container element to render into
    */
   private processCountdownBlock(source: string, el: HTMLElement): void {
-    // Parse and validate the configuration
     const result = parseConfig(source);
 
     if (!result.valid) {
@@ -36,10 +35,9 @@ export default class CountdownPlugin extends Plugin {
       return;
     }
 
-    // Render the timer
     const timer = renderTimer(el, result.config);
 
-    // Track the timer for cleanup
+    // Track for cleanup when plugin unloads
     this.activeTimers.push(timer);
   }
 }

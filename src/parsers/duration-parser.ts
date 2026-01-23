@@ -29,10 +29,8 @@ export function parseDuration(input: string): DurationParseResult {
     return { valid: false, error: 'Duration cannot be empty' };
   }
 
-  // Remove spaces between units for easier parsing
   const normalized = trimmed.replace(/\s+/g, '');
 
-  // Match all number+unit pairs
   const pattern = /^(\d+[dhms])+$/;
   if (!pattern.test(normalized)) {
     return {
@@ -41,7 +39,6 @@ export function parseDuration(input: string): DurationParseResult {
     };
   }
 
-  // Extract all units and their values
   const unitPattern = /(\d+)([dhms])/g;
   const units: Array<{ value: number; unit: string; index: number }> = [];
   let match;
@@ -54,7 +51,6 @@ export function parseDuration(input: string): DurationParseResult {
     });
   }
 
-  // Check for duplicate units
   const seenUnits = new Set<string>();
   for (const { unit } of units) {
     if (seenUnits.has(unit)) {
@@ -63,7 +59,7 @@ export function parseDuration(input: string): DurationParseResult {
     seenUnits.add(unit);
   }
 
-  // Check unit order (must be descending: d before h before m before s)
+  // Units must be in descending order: d before h before m before s
   for (let i = 1; i < units.length; i++) {
     const prev = units[i - 1];
     const curr = units[i];
@@ -72,7 +68,6 @@ export function parseDuration(input: string): DurationParseResult {
     }
   }
 
-  // Calculate total milliseconds
   let totalMs = 0;
   for (const { value, unit } of units) {
     const multiplier = UNIT_MS[unit];
