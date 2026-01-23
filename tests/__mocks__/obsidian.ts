@@ -60,7 +60,7 @@ export class Setting {
   nameText: string = '';
   descText: string = '';
 
-  constructor() {}
+  constructor(private readonly containerEl: MockHTMLElement) {}
 
   setName(name: string): this {
     this.nameText = name;
