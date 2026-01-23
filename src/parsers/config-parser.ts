@@ -16,7 +16,6 @@ export function parseConfig(input: string): ConfigValidationResult {
     return { valid: false, error: 'Configuration cannot be empty' };
   }
 
-  // Parse YAML
   let rawConfig: RawCountdownConfig;
   try {
     const parsed = yaml.load(trimmed);
@@ -31,7 +30,6 @@ export function parseConfig(input: string): ConfigValidationResult {
     };
   }
 
-  // Validate required title field
   if (!rawConfig.title) {
     return { valid: false, error: 'Configuration error: "title" is required' };
   }
@@ -41,7 +39,6 @@ export function parseConfig(input: string): ConfigValidationResult {
     return { valid: false, error: 'Configuration error: "title" cannot be empty' };
   }
 
-  // Validate target/duration mutual exclusivity
   const hasTarget = rawConfig.target !== undefined && rawConfig.target !== null;
   const hasDuration = rawConfig.duration !== undefined && rawConfig.duration !== null;
 
@@ -60,12 +57,10 @@ export function parseConfig(input: string): ConfigValidationResult {
     };
   }
 
-  // Build the config object
   const config: CountdownConfig = { title };
 
-  // Parse target date if provided
   if (hasTarget) {
-    // Handle case where YAML already parsed the value as a Date
+    // js-yaml may parse ISO dates as Date objects automatically
     if (rawConfig.target instanceof Date) {
       if (isNaN(rawConfig.target.getTime())) {
         return { valid: false, error: 'Invalid target date: date values out of range' };
@@ -81,7 +76,6 @@ export function parseConfig(input: string): ConfigValidationResult {
     }
   }
 
-  // Parse duration if provided
   if (hasDuration) {
     const durationStr = String(rawConfig.duration);
     const durationResult = parseDuration(durationStr);
@@ -91,7 +85,6 @@ export function parseConfig(input: string): ConfigValidationResult {
     config.duration = durationResult.milliseconds;
   }
 
-  // Parse optional format
   if (rawConfig.format !== undefined && rawConfig.format !== null) {
     config.format = String(rawConfig.format);
   }

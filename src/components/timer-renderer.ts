@@ -18,30 +18,30 @@ export interface ActiveTimer {
  * @returns An ActiveTimer that can be used to stop the timer
  */
 export function renderTimer(container: HTMLElement, config: CountdownConfig): ActiveTimer {
-  // Clear any existing content
   container.empty();
   container.addClass('countdown-timer');
 
-  // Create display element
+  container.createEl('div', {
+    cls: 'countdown-timer-title',
+    text: config.title,
+  });
+
   const displayEl = container.createEl('div', {
     cls: 'countdown-timer-display',
   });
 
-  // Create status element (hidden initially, shown when complete)
   const statusEl = container.createEl('div', {
     cls: 'countdown-timer-status',
   });
   statusEl.style.display = 'none';
 
-  // Track if this is a duration timer (for notification on complete)
+  // Notification only shown for duration timers, not target date timers
   const isDurationTimer = config.duration !== undefined;
 
-  // Calculate the target time
   let targetTime: number;
   if (config.target) {
     targetTime = config.target.getTime();
   } else if (config.duration) {
-    // Duration timer starts from now
     targetTime = Date.now() + config.duration;
   } else {
     // Should not happen due to validation, but handle gracefully
@@ -49,7 +49,7 @@ export function renderTimer(container: HTMLElement, config: CountdownConfig): Ac
     return { stop: () => {} };
   }
 
-  // Track if timer has completed (to avoid multiple notifications)
+  // Prevents multiple notifications when updateDisplay is called repeatedly
   let hasCompleted = false;
 
   /**
@@ -59,12 +59,10 @@ export function renderTimer(container: HTMLElement, config: CountdownConfig): Ac
     const now = Date.now();
     const remaining = targetTime - now;
 
-    // Format and display the time (formatTimeRemaining handles negative values)
     const formatted = formatTimeRemaining(remaining, config.format);
     displayEl.setText(formatted);
 
     if (remaining <= 0) {
-      // Timer has expired - show status and add expired class
       container.addClass('countdown-timer-expired');
       statusEl.setText('complete');
       statusEl.style.display = '';
@@ -72,7 +70,6 @@ export function renderTimer(container: HTMLElement, config: CountdownConfig): Ac
       if (!hasCompleted) {
         hasCompleted = true;
 
-        // Show notification only for duration timers
         if (isDurationTimer) {
           new Notice(`Timer "${config.title}" has completed!`);
         }
@@ -80,13 +77,10 @@ export function renderTimer(container: HTMLElement, config: CountdownConfig): Ac
     }
   }
 
-  // Initial update
   updateDisplay();
 
-  // Set up interval for live updates (every second)
   const intervalId = window.setInterval(updateDisplay, 1000);
 
-  // Return cleanup function
   return {
     stop: () => {
       window.clearInterval(intervalId);

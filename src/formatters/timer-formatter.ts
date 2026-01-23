@@ -38,7 +38,7 @@ function pad(num: number, width: number = 2): string {
  * @returns Formatted time string or "complete" if expired
  */
 export function formatTimeRemaining(ms: number, format?: string): string {
-  // Treat negative values as zero (timer complete)
+  // Negative values treated as zero since timer is complete
   const effectiveMs = Math.max(0, ms);
   const components = msToComponents(effectiveMs);
 
@@ -46,7 +46,6 @@ export function formatTimeRemaining(ms: number, format?: string): string {
     return formatWithStrftime(format, components);
   }
 
-  // Default format: "0d 00h 00m 00s" (zero-padded for consistent width)
   return `${components.days}d ${pad(components.hours)}h ${pad(components.minutes)}m ${pad(components.seconds)}s`;
 }
 
@@ -67,27 +66,22 @@ export function formatTimeRemaining(ms: number, format?: string): string {
 export function formatWithStrftime(format: string, components: TimeComponents): string {
   const { days, hours, minutes, seconds } = components;
 
-  // Check if %d is in the format to determine how to handle hours
   const hasDaysFormat = format.includes('%d');
 
-  // Calculate total hours (including days) if %d is not in format
+  // When %d is not used, roll days into hours so users can show total hours
   const displayHours = hasDaysFormat ? hours : days * 24 + hours;
 
   let result = format;
 
-  // Process format codes
-  // We need to be careful about the order to avoid replacing %% incorrectly
-  // First, temporarily replace %% with a placeholder
+  // Replace %% with placeholder first to avoid conflicts with other replacements
   const percentPlaceholder = '\x00PERCENT\x00';
   result = result.replace(/%%/g, percentPlaceholder);
 
-  // Replace format codes
   result = result.replace(/%d/g, days.toString());
   result = result.replace(/%H/g, pad(displayHours));
   result = result.replace(/%M/g, pad(minutes));
   result = result.replace(/%S/g, pad(seconds));
 
-  // Restore literal percent signs
   result = result.replace(new RegExp(percentPlaceholder, 'g'), '%');
 
   return result;

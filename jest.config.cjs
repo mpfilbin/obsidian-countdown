@@ -11,6 +11,7 @@ module.exports = {
   verbose: true,
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^obsidian$': '<rootDir>/tests/__mocks__/obsidian.ts',
   },
   transform: {
     '^.+\\.ts$': [

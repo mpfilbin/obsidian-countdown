@@ -49,19 +49,17 @@ export function parseDateTime(input: string): DateTimeParseResult {
     return { valid: false, error: 'Date/time cannot be empty' };
   }
 
-  // Try ISO 8601 first (priority)
+  // ISO 8601 takes priority as the most unambiguous format
   const isoResult = tryParseISO8601(trimmed);
   if (isoResult) {
     return isoResult;
   }
 
-  // Try natural language formats
   const naturalResult = tryParseNaturalLanguage(trimmed);
   if (naturalResult) {
     return naturalResult;
   }
 
-  // Try US date format (MM/DD/YYYY)
   const usResult = tryParseUSFormat(trimmed);
   if (usResult) {
     return usResult;
@@ -88,11 +86,8 @@ function tryParseISO8601(input: string): DateTimeParseResult | null {
     return { valid: false, error: 'Invalid date/time: date values out of range' };
   }
 
-  // Full ISO 8601 patterns with time component
   const isoPatterns = [
-    // 2026-12-25T10:30:00.123Z or 2026-12-25T10:30:00.123+05:00
     /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?$/,
-    // 2026-12-25T10:30:00
     /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/,
   ];
 
