@@ -1,11 +1,14 @@
 import { Plugin } from 'obsidian';
 import { parseConfig } from './parsers/config-parser';
 import { renderTimer, renderError, ActiveTimer } from './components/timer-renderer';
+import { CountdownSettingTab } from './components/settings-tab';
 
 export default class CountdownPlugin extends Plugin {
   private activeTimers: ActiveTimer[] = [];
 
   async onload() {
+    this.addSettingTab(new CountdownSettingTab(this.app, this));
+
     this.registerMarkdownCodeBlockProcessor('countdown', (source, el) => {
       this.processCountdownBlock(source, el);
     });
