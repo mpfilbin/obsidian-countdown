@@ -57,4 +57,4 @@ jobs:
           gh release create "$version" \
             --title="$version" \
             --generate-notes \
-            main.js manifest.json styles.css
+            dist/main.js dist/manifest.json dist/styles.css
