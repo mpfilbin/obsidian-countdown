@@ -60,7 +60,7 @@ export class Setting {
   nameText: string = '';
   descText: string = '';
 
-  constructor(_containerEl: unknown) {}
+  constructor() {}
 
   setName(name: string): this {
     this.nameText = name;

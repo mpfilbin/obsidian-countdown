@@ -34,7 +34,8 @@ target: December 25, 2026 at 10:30
   },
   {
     title: 'Duration timer',
-    description: 'Count down from a duration instead of to a date. Shows a notification when complete.',
+    description:
+      'Count down from a duration instead of to a date. Shows a notification when complete.',
     code: `\`\`\`countdown
 title: Pomodoro
 duration: 25m
@@ -50,7 +51,8 @@ duration: 2d5h30m45s
   },
   {
     title: 'Custom format',
-    description: 'Use strftime-style format codes: %d (days), %H (hours), %M (minutes), %S (seconds).',
+    description:
+      'Use strftime-style format codes: %d (days), %H (hours), %M (minutes), %S (seconds).',
     code: `\`\`\`countdown
 title: Conference Countdown
 target: 2026-06-01T09:00:00
@@ -93,9 +95,7 @@ export class CountdownSettingTab extends PluginSettingTab {
     });
 
     for (const example of EXAMPLES) {
-      new Setting(containerEl)
-        .setName(example.title)
-        .setDesc(example.description);
+      new Setting(containerEl).setName(example.title).setDesc(example.description);
 
       const codeEl = containerEl.createEl('pre', { cls: 'countdown-example-code' });
       codeEl.createEl('code', { text: example.code });
@@ -115,8 +115,16 @@ export class CountdownSettingTab extends PluginSettingTab {
 
     const options = [
       { name: 'title', required: 'Yes', desc: 'Display title for the countdown' },
-      { name: 'target', required: 'Either target or duration', desc: 'Target date/time to count down to' },
-      { name: 'duration', required: 'Either target or duration', desc: 'Duration to count down (e.g., 1h30m)' },
+      {
+        name: 'target',
+        required: 'Either target or duration',
+        desc: 'Target date/time to count down to',
+      },
+      {
+        name: 'duration',
+        required: 'Either target or duration',
+        desc: 'Duration to count down (e.g., 1h30m)',
+      },
       { name: 'format', required: 'No', desc: 'Custom strftime-style format string' },
     ];
 

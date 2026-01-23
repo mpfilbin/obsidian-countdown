@@ -1,5 +1,5 @@
 import { CountdownSettingTab } from '../../src/components/settings-tab';
-import { createMockElement, MockHTMLElement } from '../__mocks__/obsidian';
+import { MockHTMLElement } from '../__mocks__/obsidian';
 
 /**
  * Helper to find all elements with a specific tag in the element tree
