@@ -2,10 +2,11 @@ import { parseDateTime } from '../../src/parsers/datetime-parser';
 
 describe('DateTimeParser', () => {
   describe('when parsing ISO 8601 formats', () => {
-    it('should parse full ISO 8601 datetime (2026-12-25T00:00:00)', () => {
+    it('should parse full ISO 8601 datetime without timezone as local time (2026-12-25T00:00:00)', () => {
       const result = parseDateTime('2026-12-25T00:00:00');
       expect(result.valid).toBe(true);
       if (result.valid) {
+        // Should be parsed as local time, not UTC
         expect(result.date.getFullYear()).toBe(2026);
         expect(result.date.getMonth()).toBe(11); // December is 11
         expect(result.date.getDate()).toBe(25);
@@ -15,19 +16,39 @@ describe('DateTimeParser', () => {
       }
     });
 
-    it('should parse ISO 8601 with timezone offset (2026-12-25T10:30:00+05:00)', () => {
-      const result = parseDateTime('2026-12-25T10:30:00+05:00');
+    it('should parse ISO 8601 datetime without timezone as local time (2026-03-20T14:30:00)', () => {
+      const result = parseDateTime('2026-03-20T14:30:00');
       expect(result.valid).toBe(true);
       if (result.valid) {
-        expect(result.date instanceof Date).toBe(true);
+        // Should be parsed as local time - the local date/time values should match input
+        expect(result.date.getFullYear()).toBe(2026);
+        expect(result.date.getMonth()).toBe(2); // March is 2
+        expect(result.date.getDate()).toBe(20);
+        expect(result.date.getHours()).toBe(14);
+        expect(result.date.getMinutes()).toBe(30);
       }
     });
 
-    it('should parse ISO 8601 with Z timezone (2026-12-25T10:30:00Z)', () => {
+    it('should parse ISO 8601 with timezone offset and respect the timezone (2026-12-25T10:30:00+05:00)', () => {
+      const result = parseDateTime('2026-12-25T10:30:00+05:00');
+      expect(result.valid).toBe(true);
+      if (result.valid) {
+        // +05:00 means 10:30 local is 05:30 UTC
+        expect(result.date.getUTCHours()).toBe(5);
+        expect(result.date.getUTCMinutes()).toBe(30);
+      }
+    });
+
+    it('should parse ISO 8601 with Z timezone as UTC (2026-12-25T10:30:00Z)', () => {
       const result = parseDateTime('2026-12-25T10:30:00Z');
       expect(result.valid).toBe(true);
       if (result.valid) {
-        expect(result.date instanceof Date).toBe(true);
+        // Z means UTC, so UTC values should match exactly
+        expect(result.date.getUTCFullYear()).toBe(2026);
+        expect(result.date.getUTCMonth()).toBe(11);
+        expect(result.date.getUTCDate()).toBe(25);
+        expect(result.date.getUTCHours()).toBe(10);
+        expect(result.date.getUTCMinutes()).toBe(30);
       }
     });
 

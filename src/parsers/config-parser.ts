@@ -18,7 +18,10 @@ export function parseConfig(input: string): ConfigValidationResult {
 
   let rawConfig: RawCountdownConfig;
   try {
-    const parsed = yaml.load(trimmed);
+    // Use JSON_SCHEMA to disable automatic date parsing
+    // This ensures all dates are passed as strings to our parseDateTime function
+    // which correctly handles timezone vs local time distinctions
+    const parsed = yaml.load(trimmed, { schema: yaml.JSON_SCHEMA });
     if (typeof parsed !== 'object' || parsed === null) {
       return { valid: false, error: 'Invalid YAML: configuration must be an object' };
     }
@@ -60,20 +63,14 @@ export function parseConfig(input: string): ConfigValidationResult {
   const config: CountdownConfig = { title };
 
   if (hasTarget) {
-    // js-yaml may parse ISO dates as Date objects automatically
-    if (rawConfig.target instanceof Date) {
-      if (isNaN(rawConfig.target.getTime())) {
-        return { valid: false, error: 'Invalid target date: date values out of range' };
-      }
-      config.target = rawConfig.target;
-    } else {
-      const targetStr = String(rawConfig.target);
-      const dateResult = parseDateTime(targetStr);
-      if (!dateResult.valid) {
-        return { valid: false, error: `Invalid target date: ${dateResult.error}` };
-      }
-      config.target = dateResult.date;
+    // With JSON_SCHEMA, dates are always strings, so we parse them ourselves
+    // This allows us to correctly handle timezone vs local time distinctions
+    const targetStr = String(rawConfig.target);
+    const dateResult = parseDateTime(targetStr);
+    if (!dateResult.valid) {
+      return { valid: false, error: `Invalid target date: ${dateResult.error}` };
     }
+    config.target = dateResult.date;
   }
 
   if (hasDuration) {

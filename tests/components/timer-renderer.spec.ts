@@ -138,6 +138,72 @@ describe('TimerRenderer', () => {
         expect(typeof timer.stop).toBe('function');
       });
     });
+
+    describe('target date display', () => {
+      it('should render the target date element when target is provided', () => {
+        const container = createMockContainer();
+        const config: CountdownConfig = {
+          title: 'New Year Countdown',
+          target: new Date('2025-12-31T00:00:00Z'),
+        };
+
+        renderTimer(container, config);
+
+        const targetDateElement = container.children.find(
+          (child) => child.cls === 'countdown-timer-target'
+        );
+        expect(targetDateElement).toBeDefined();
+      });
+
+      it('should display the target date in a readable format', () => {
+        const container = createMockContainer();
+        // Use midday to avoid timezone edge cases
+        const config: CountdownConfig = {
+          title: 'New Year Countdown',
+          target: new Date('2025-12-31T12:00:00Z'),
+        };
+
+        renderTimer(container, config);
+
+        const targetDateElement = container.children.find(
+          (child) => child.cls === 'countdown-timer-target'
+        );
+        // Should contain the date in some readable format (month name and year)
+        expect(targetDateElement?.text).toContain('December');
+        expect(targetDateElement?.text).toContain('2025');
+      });
+
+      it('should not render target date element for duration timers', () => {
+        const container = createMockContainer();
+        const config: CountdownConfig = {
+          title: 'Quick Timer',
+          duration: 60000, // 1 minute
+        };
+
+        renderTimer(container, config);
+
+        const targetDateElement = container.children.find(
+          (child) => child.cls === 'countdown-timer-target'
+        );
+        expect(targetDateElement).toBeUndefined();
+      });
+
+      it('should render the target date after the status element', () => {
+        const container = createMockContainer();
+        const config: CountdownConfig = {
+          title: 'Test Timer',
+          target: new Date('2025-12-31T00:00:00Z'),
+        };
+
+        renderTimer(container, config);
+
+        // Order should be: title, display, status, target
+        const classes = container.children.map((child) => child.cls);
+        const statusIndex = classes.indexOf('countdown-timer-status');
+        const targetIndex = classes.indexOf('countdown-timer-target');
+        expect(targetIndex).toBeGreaterThan(statusIndex);
+      });
+    });
   });
 
   describe('renderError', () => {
