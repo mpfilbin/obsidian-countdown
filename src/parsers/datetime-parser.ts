@@ -86,19 +86,32 @@ function tryParseISO8601(input: string): DateTimeParseResult | null {
     return { valid: false, error: 'Invalid date/time: date values out of range' };
   }
 
-  const isoPatterns = [
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?$/,
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/,
-  ];
-
-  for (const pattern of isoPatterns) {
-    if (pattern.test(input)) {
-      const date = new Date(input);
-      if (isValidDate(date)) {
-        return { valid: true, date };
-      }
-      return { valid: false, error: 'Invalid date/time: date values out of range' };
+  // ISO 8601 datetime with explicit timezone (Z or +/-offset) - use native parsing
+  const isoWithTimezonePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/;
+  if (isoWithTimezonePattern.test(input)) {
+    const date = new Date(input);
+    if (isValidDate(date)) {
+      return { valid: true, date };
     }
+    return { valid: false, error: 'Invalid date/time: date values out of range' };
+  }
+
+  // ISO 8601 datetime WITHOUT timezone - parse as local time
+  // This ensures consistent behavior across all JavaScript environments
+  const isoNoTimezonePattern = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})$/;
+  const isoNoTimezoneMatch = isoNoTimezonePattern.exec(input);
+  if (isoNoTimezoneMatch) {
+    const year = parseInt(isoNoTimezoneMatch[1] ?? '0', 10);
+    const month = parseInt(isoNoTimezoneMatch[2] ?? '0', 10) - 1; // 0-indexed
+    const day = parseInt(isoNoTimezoneMatch[3] ?? '0', 10);
+    const hours = parseInt(isoNoTimezoneMatch[4] ?? '0', 10);
+    const minutes = parseInt(isoNoTimezoneMatch[5] ?? '0', 10);
+    const seconds = parseInt(isoNoTimezoneMatch[6] ?? '0', 10);
+    const date = new Date(year, month, day, hours, minutes, seconds);
+    if (isValidDate(date) && date.getDate() === day && date.getMonth() === month) {
+      return { valid: true, date };
+    }
+    return { valid: false, error: 'Invalid date/time: date values out of range' };
   }
 
   return null;

@@ -115,6 +115,74 @@ target: 2026-12-25
           expect(result.config.title).toBe('My Timer');
         }
       });
+
+      it('should parse unquoted ISO date as local time (not UTC)', () => {
+        // When js-yaml auto-parses dates, they are interpreted as UTC
+        // We need to convert them to local time to match user expectations
+        const yaml = `
+title: My Timer
+target: 2026-03-20
+`;
+        const result = parseConfig(yaml);
+        expect(result.valid).toBe(true);
+        if (result.valid) {
+          // The date should be March 20 at midnight LOCAL time
+          expect(result.config.target?.getFullYear()).toBe(2026);
+          expect(result.config.target?.getMonth()).toBe(2); // March is 2
+          expect(result.config.target?.getDate()).toBe(20);
+          expect(result.config.target?.getHours()).toBe(0);
+          expect(result.config.target?.getMinutes()).toBe(0);
+        }
+      });
+
+      it('should parse unquoted ISO datetime as local time (not UTC)', () => {
+        const yaml = `
+title: My Timer
+target: 2026-03-20T14:30:00
+`;
+        const result = parseConfig(yaml);
+        expect(result.valid).toBe(true);
+        if (result.valid) {
+          // The date should be March 20 at 14:30 LOCAL time
+          expect(result.config.target?.getFullYear()).toBe(2026);
+          expect(result.config.target?.getMonth()).toBe(2); // March is 2
+          expect(result.config.target?.getDate()).toBe(20);
+          expect(result.config.target?.getHours()).toBe(14);
+          expect(result.config.target?.getMinutes()).toBe(30);
+        }
+      });
+
+      it('should respect Z timezone in unquoted ISO datetime', () => {
+        const yaml = `
+title: My Timer
+target: 2026-03-20T08:46:00Z
+`;
+        const result = parseConfig(yaml);
+        expect(result.valid).toBe(true);
+        if (result.valid) {
+          // 08:46 UTC should be stored as UTC, displayed in local time
+          // The Date object should represent 08:46 UTC
+          expect(result.config.target?.getUTCFullYear()).toBe(2026);
+          expect(result.config.target?.getUTCMonth()).toBe(2); // March is 2
+          expect(result.config.target?.getUTCDate()).toBe(20);
+          expect(result.config.target?.getUTCHours()).toBe(8);
+          expect(result.config.target?.getUTCMinutes()).toBe(46);
+        }
+      });
+
+      it('should respect timezone offset in unquoted ISO datetime', () => {
+        const yaml = `
+title: My Timer
+target: 2026-03-20T10:30:00+05:00
+`;
+        const result = parseConfig(yaml);
+        expect(result.valid).toBe(true);
+        if (result.valid) {
+          // 10:30 at +05:00 is 05:30 UTC
+          expect(result.config.target?.getUTCHours()).toBe(5);
+          expect(result.config.target?.getUTCMinutes()).toBe(30);
+        }
+      });
     });
   });
 

@@ -35,6 +35,20 @@ export function renderTimer(container: HTMLElement, config: CountdownConfig): Ac
   });
   statusEl.style.display = 'none';
 
+  if (config.target) {
+    const formattedDate = config.target.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    });
+    container.createEl('div', {
+      cls: 'countdown-timer-target',
+      text: formattedDate,
+    });
+  }
+
   // Notification only shown for duration timers, not target date timers
   const isDurationTimer = config.duration !== undefined;
 
