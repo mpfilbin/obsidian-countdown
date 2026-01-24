@@ -117,8 +117,8 @@ target: 2026-12-25
       });
 
       it('should parse unquoted ISO date as local time (not UTC)', () => {
-        // When js-yaml auto-parses dates, they are interpreted as UTC
-        // We need to convert them to local time to match user expectations
+        // With yaml.JSON_SCHEMA, js-yaml leaves dates as strings; parseConfig/parseDateTime
+        // should interpret this unquoted ISO date as a local-time midnight value.
         const yaml = `
 title: My Timer
 target: 2026-03-20
