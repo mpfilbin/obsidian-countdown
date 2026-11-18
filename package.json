@@ -1,6 +1,6 @@
 {
   "name": "obsidian-countdown",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "A countdown timer plugin for Obsidian using code fence syntax",
   "main": "main.js",
   "type": "module",
@@ -27,7 +27,7 @@
     "@eslint/js": "9.39.2",
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^25.0.10",
+    "@types/node": "^25.2.3",
     "esbuild": "0.27.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-obsidianmd": "0.1.9",
