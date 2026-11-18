@@ -28,9 +28,16 @@ Thank you for your interest in contributing to this project! This document provi
    npm run dev
    ```
 
-4. To install the plugin in your vault for testing:
+4. To build and install the plugin in your vault for testing:
    ```bash
-   npm run deploy -- /path/to/your/vault
+   ./scripts/install.sh /path/to/your/vault        # macOS / Linux
+   .\scripts\install.ps1 C:\path\to\your\vault     # Windows (PowerShell)
+   ```
+
+   To remove it again (deletes the plugin folder and its `community-plugins.json` entry):
+   ```bash
+   ./scripts/uninstall.sh /path/to/your/vault      # macOS / Linux
+   .\scripts\uninstall.ps1 C:\path\to\your\vault   # Windows (PowerShell)
    ```
 
 ## Development Workflow
@@ -114,6 +121,18 @@ Write clear, concise commit messages:
 6. Submit a pull request with a clear description of the changes
 
 All pull requests must pass CI checks before merging.
+
+## Releasing
+
+Releases are cut from `master` by CI:
+
+1. On a branch, run `npm run release -- <major|minor|patch>`. This bumps `package.json`, `package-lock.json`, `manifest.json` and `versions.json` together and commits them as `chore: update version to X.Y.Z`.
+2. Open a pull request and merge it once CI is green.
+3. The `Release` workflow runs on any push to `master` that changes `manifest.json`. It builds the plugin and publishes a GitHub release named after the `manifest.json` version (skipped if that release already exists), attaching `main.js`, `manifest.json` and `styles.css`.
+
+## Security
+
+See [docs/security/threat-model.md](docs/security/threat-model.md). Every pull request description should include one line: `Threat model: no impact` or `Threat model: updated (IDs)`.
 
 ## Code Style
 
