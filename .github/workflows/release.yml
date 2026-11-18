@@ -1,60 +1,46 @@
-name: Release Obsidian plugin
+name: Release
 
 on:
   push:
     branches:
       - master
+    paths:
+      - manifest.json
 
 jobs:
   release:
+    name: Build and release
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Use Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: '18.x'
+          persist-credentials: false
 
-      - name: Get version from manifest
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+
+      - name: Read version from manifest
         id: version
-        run: |
-          version=$(jq -r '.version' manifest.json)
-          echo "version=$version" >> $GITHUB_OUTPUT
-
-      - name: Check if release exists
-        id: check_release
-        run: |
-          if gh release view "${{ steps.version.outputs.version }}" > /dev/null 2>&1; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "version=$(node -p "require('./manifest.json').version")" >> $GITHUB_OUTPUT
 
       - name: Build plugin
-        if: steps.check_release.outputs.exists == 'false'
-        run: |
-          npm install
-          npm run build
+        run: npm run build
 
-      - name: Create tag and release
-        if: steps.check_release.outputs.exists == 'false'
+      - name: Create GitHub release
+        run: |
+          if gh release view "${{ steps.version.outputs.version }}" > /dev/null 2>&1; then
+            echo "Release ${{ steps.version.outputs.version }} already exists, skipping."
+          else
+            gh release create "${{ steps.version.outputs.version }}" \
+              dist/main.js dist/manifest.json dist/styles.css \
+              --title "${{ steps.version.outputs.version }}" \
+              --generate-notes
+          fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          version="${{ steps.version.outputs.version }}"
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "$version" -m "Release $version"
-          git push origin "$version"
-
-          gh release create "$version" \
-            --title="$version" \
-            --generate-notes \
-            dist/main.js dist/manifest.json dist/styles.css
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
