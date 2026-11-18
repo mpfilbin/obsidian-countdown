@@ -1,7 +1,7 @@
 {
   "id": "obsidian-countdown",
   "name": "Countdown Timer",
-  "version": "1.2.11",
+  "version": "1.2.12",
   "minAppVersion": "0.15.0",
   "description": "Add countdown timers to your notes using code fence syntax",
   "author": "Michael Filbin",
