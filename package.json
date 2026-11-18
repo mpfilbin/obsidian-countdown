@@ -1,6 +1,6 @@
 {
   "name": "obsidian-countdown",
-  "version": "1.2.15",
+  "version": "1.2.17",
   "description": "A countdown timer plugin for Obsidian using code fence syntax",
   "main": "main.js",
   "type": "module",
