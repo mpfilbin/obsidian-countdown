@@ -42,6 +42,7 @@ target: 2026-01-01
 | `title` | Yes | Display title for the countdown |
 | `target` | One of `target` or `duration` | Target date/time to count down to |
 | `duration` | One of `target` or `duration` | Duration to count down from |
+| `started` | No | When a `duration` timer was started. Written by the Start button; only valid with `duration` |
 | `format` | No | Custom display format (strftime-style) |
 
 **Note:** You must specify either `target` or `duration`, but not both.
@@ -87,6 +88,22 @@ duration: 2d5h30m45s   # 2 days, 5 hours, 30 minutes, 45 seconds
 ```
 
 Units must be in descending order: `d` (days), `h` (hours), `m` (minutes), `s` (seconds).
+
+#### Starting and resetting duration timers
+
+A duration timer shows its full duration with a **Start** button. Pressing it writes the start time into the code block, so the timer keeps counting down when you switch between reading view and Live Preview, edit the note, or close and reopen it:
+
+````markdown
+```countdown
+title: Pomodoro
+duration: 25m
+started: 2026-11-20T14:30:00.000Z
+```
+````
+
+Press **Reset** to remove the `started` line and return to the idle state. You can also add, edit or delete `started` by hand (ISO 8601; include `Z` or an offset to be timezone-exact).
+
+The "completed" notification appears only if Obsidian is showing the timer when it finishes. A timer that finished while the note was closed shows as complete when you reopen it. The button needs the block to sit directly in the note, so it can't update timers nested inside quotes or callouts.
 
 ### Custom Format
 

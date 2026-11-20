@@ -298,4 +298,33 @@ target: broken
       });
     });
   });
+
+  describe('started', () => {
+    it('parses started alongside duration', () => {
+      const result = parseConfig('title: T\nduration: 25m\nstarted: 2026-11-20T12:00:00.000Z');
+      expect(result.valid).toBe(true);
+      if (result.valid) {
+        expect(result.config.started?.toISOString()).toBe('2026-11-20T12:00:00.000Z');
+      }
+    });
+
+    it('leaves started undefined when absent', () => {
+      const result = parseConfig('title: T\nduration: 25m');
+      expect(result.valid && result.config.started).toBeUndefined();
+    });
+
+    it('rejects started without duration', () => {
+      const result = parseConfig('title: T\ntarget: 2030-01-01\nstarted: 2026-11-20T12:00:00Z');
+      expect(result).toEqual({
+        valid: false,
+        error: 'Configuration error: "started" can only be used with "duration"',
+      });
+    });
+
+    it('rejects an invalid started value', () => {
+      const result = parseConfig('title: T\nduration: 25m\nstarted: soon');
+      expect(result.valid).toBe(false);
+      if (!result.valid) expect(result.error).toContain('Invalid started date');
+    });
+  });
 });

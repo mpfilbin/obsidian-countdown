@@ -82,6 +82,21 @@ export function parseConfig(input: string): ConfigValidationResult {
     config.duration = durationResult.milliseconds;
   }
 
+  const hasStarted = rawConfig.started !== undefined && rawConfig.started !== null;
+  if (hasStarted) {
+    if (!hasDuration) {
+      return {
+        valid: false,
+        error: 'Configuration error: "started" can only be used with "duration"',
+      };
+    }
+    const startedResult = parseDateTime(String(rawConfig.started));
+    if (!startedResult.valid) {
+      return { valid: false, error: `Invalid started date: ${startedResult.error}` };
+    }
+    config.started = startedResult.date;
+  }
+
   if (rawConfig.format !== undefined && rawConfig.format !== null) {
     config.format = String(rawConfig.format);
   }
