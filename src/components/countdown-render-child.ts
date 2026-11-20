@@ -1,6 +1,6 @@
 import { MarkdownRenderChild } from 'obsidian';
 import { CountdownConfig } from '../types';
-import { renderTimer, ActiveTimer } from './timer-renderer';
+import { renderTimer, ActiveTimer, TimerActions } from './timer-renderer';
 
 /**
  * Ties a rendered countdown to the lifecycle of its code block.
@@ -14,13 +14,14 @@ export class CountdownRenderChild extends MarkdownRenderChild {
 
   constructor(
     containerEl: HTMLElement,
-    private readonly config: CountdownConfig
+    private readonly config: CountdownConfig,
+    private readonly actions?: TimerActions
   ) {
     super(containerEl);
   }
 
   onload(): void {
-    this.timer = renderTimer(this.containerEl, this.config);
+    this.timer = renderTimer(this.containerEl, this.config, this.actions);
   }
 
   onunload(): void {

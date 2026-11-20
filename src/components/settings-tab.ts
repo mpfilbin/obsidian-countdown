@@ -35,7 +35,7 @@ target: December 25, 2026 at 10:30
   {
     title: 'Duration timer',
     description:
-      'Count down from a duration instead of to a date. Shows a notification when complete.',
+      'Count down from a duration instead of to a date. Press Start to begin; the start time is saved in the block. Shows a notification when complete.',
     code: `\`\`\`countdown
 title: Pomodoro
 duration: 25m
@@ -124,6 +124,11 @@ export class CountdownSettingTab extends PluginSettingTab {
         name: 'duration',
         required: 'Either target or duration',
         desc: 'Duration to count down (e.g., 1h30m)',
+      },
+      {
+        name: 'started',
+        required: 'No',
+        desc: 'Start time of a duration timer (written by the Start button)',
       },
       { name: 'format', required: 'No', desc: 'Custom strftime-style format string' },
     ];

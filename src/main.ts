@@ -1,6 +1,7 @@
 import { MarkdownPostProcessorContext, Plugin } from 'obsidian';
 import { parseConfig } from './parsers/config-parser';
-import { renderError } from './components/timer-renderer';
+import { updateStartedInBlock } from './block-state';
+import { renderError, TimerActions } from './components/timer-renderer';
 import { CountdownRenderChild } from './components/countdown-render-child';
 import { CountdownSettingTab } from './components/settings-tab';
 
@@ -32,7 +33,16 @@ export default class CountdownPlugin extends Plugin {
       return;
     }
 
+    // Duration timers persist their start time in the block so re-renders don't restart them
+    const actions: TimerActions | undefined =
+      result.config.duration !== undefined
+        ? {
+            onStart: (startedAt) => updateStartedInBlock(this.app, ctx, el, source, startedAt),
+            onReset: () => updateStartedInBlock(this.app, ctx, el, source, null),
+          }
+        : undefined;
+
     // The render child stops the timer when Obsidian tears this block down
-    ctx.addChild(new CountdownRenderChild(el, result.config));
+    ctx.addChild(new CountdownRenderChild(el, result.config, actions));
   }
 }

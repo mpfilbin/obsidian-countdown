@@ -30,6 +30,11 @@
   font-style: italic;
 }
 
+.countdown-timer-button {
+  display: block;
+  margin: 0.75em auto 0;
+}
+
 .countdown-timer-target {
   font-size: 0.85em;
   margin-top: 0.5em;

@@ -8,6 +8,8 @@ export interface CountdownConfig {
   target?: Date;
   /** Duration in milliseconds (mutually exclusive with target) */
   duration?: number;
+  /** When a duration timer was started (only valid with duration) */
+  started?: Date;
   /** Optional strftime format string */
   format?: string;
 }
@@ -20,6 +22,7 @@ export interface RawCountdownConfig {
   title?: string;
   target?: string | Date;
   duration?: string;
+  started?: string;
   format?: string;
 }
 

@@ -78,3 +78,7 @@ export class MarkdownRenderChild {
   onload(): void {}
   onunload(): void {}
 }
+
+export class TFile {
+  path = '';
+}

@@ -20,7 +20,13 @@ describe('CountdownRenderChild', () => {
     expect(renderTimer).not.toHaveBeenCalled();
 
     child.onload();
-    expect(renderTimer).toHaveBeenCalledWith(container, config);
+    expect(renderTimer).toHaveBeenCalledWith(container, config, undefined);
+  });
+
+  it('passes persistence actions through to the renderer', () => {
+    const actions = { onStart: jest.fn(), onReset: jest.fn() };
+    new CountdownRenderChild(container, config, actions).onload();
+    expect(renderTimer).toHaveBeenCalledWith(container, config, actions);
   });
 
   it('stops the timer when unloaded', () => {
