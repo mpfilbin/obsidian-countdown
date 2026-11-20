@@ -72,3 +72,9 @@ export class Setting {
     return this;
   }
 }
+
+export class MarkdownRenderChild {
+  constructor(public containerEl: unknown) {}
+  onload(): void {}
+  onunload(): void {}
+}
